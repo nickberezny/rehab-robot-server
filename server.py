@@ -55,5 +55,5 @@ while True:
     if Connected[0] and Connected[1]:
         start_new_thread(ui_thread, (Clients, ))
 
-    
+Clients[0].sendall("Finished!")    
 ServerSocket.close()
