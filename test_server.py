@@ -3,8 +3,6 @@ import os
 import select
 from _thread import *
 
-
-
 host = "0.0.0.0"
 port = 5000
 ThreadCount = 0
