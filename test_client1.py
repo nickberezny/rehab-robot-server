@@ -2,6 +2,8 @@ import socket
 import sys
 from time import sleep
 
+isRunning = False;
+
 
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -19,13 +21,17 @@ sock.sendall(message)
 
 sleep(2)
 sock.sendall(str.encode("UI::hi from robot"))
-data = sock.recv(2048).decode('ascii')
-print(data)
-if(data == "HOME"):
-	for i in range(1,10):
-		sock.sendall(str.encode("UI::" + str(i)))
-		sleep(1)
 
+
+while(not isRunning):
+	data = sock.recv(2048).decode('ascii')
+	print(data)
+	if(data == "STOP"):
+		isRunning = True
+	elif(data == "HOME" or data == "SET" or data == "CALIBRATE"):
+		sock.sendall(str.encode("UI::STARTTASK"))
+		sleep(2)
+		sock.sendall(str.encode("UI::" + data))
 
 
 sock.sendall(str.encode("STOP::"))
