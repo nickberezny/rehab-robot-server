@@ -2,6 +2,8 @@ import socket
 import os
 import select
 from _thread import *
+from time import sleep
+import matplotlib.pyplot as plt
 
 host = "0.0.0.0"
 port = 5000
@@ -9,10 +11,31 @@ ThreadCount = 0
 initMode = True
 runMode = False
 
+plotRefereshRate = 10 
+dataMutex = False;
+
 clients = {}
 clientNames = ["ROBOT", "UI"]
 connectLog = []
 
+xdata = [0]
+
+def plotter():
+	global xdata
+	f, (ax1, ax2) = plt.subplots(2, 1, sharex='all', sharey='none')
+	print("Plotting!")
+	while(True):
+		#start_new_thread(plotter, (f, ax1, ax2 ))
+		y = xdata.copy()
+		x = list(range(0,len(y)))
+		ax1.clear()
+		ax2.clear()
+		ax1.plot(x,y)  # 5 seconds rolling window
+		ax2.plot()
+		ax2.set_xlabel('time [s]')
+		ax1.set_ylabel('Position [m]')
+		ax2.set_ylabel('Force [N]')
+		plt.pause(1/plotRefereshRate)
 
 def wait_for_selection_thread(connection):
 	global initMode, runMode
@@ -35,13 +58,14 @@ def init_thread(connection):
 		start_new_thread(wait_for_selection_thread, (connection, ))
 
 	elif data == "ROBOT":
+		sleep(1)
+		connection.sendall(str.encode("hi from server"))
 		if "UI" in clients:
 			clients["UI"].sendall(str.encode("conn::ROBOT"))
 		else:
 			connectLog.append(data)
 
-	
-
+start_new_thread(plotter, ())
 
 ServerSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -62,18 +86,30 @@ while(initMode):
 			start_new_thread(init_thread, (Conn, ))
 
 
+
+
 while(runMode):
-	readable, writable, errored = select.select(list(clients.values()), [], [], 10)
+	readable, writable, errored = select.select(list(clients.values()), [], [])
 	for s in readable:
 		msg = s.recv(2048).decode('ascii')
 		data = msg.split("::")
-		print(data)
-		if(data[0] == "STOP"):
-			runMode = False
+
+		try:
+			print(int(data[1]))
+			xdata.append(int(data[1]))
+			print(xdata)
+		except:
+			print("oops")
+
+		
+			
+
 		try:
 			clients[data[0]].sendall(str.encode(data[1]));
 		except:
 			print("Invalid route to " + data[0])
+		if(data[1] == "SHUTDOWN"):
+			runMode = False
 		
 	
 ServerSocket.close()
