@@ -19,19 +19,22 @@ clientNames = ["ROBOT", "UI"]
 connectLog = []
 
 xdata = [0]
+fdata = [0]
 
 def plotter():
 	global xdata
+	global fdata
 	f, (ax1, ax2) = plt.subplots(2, 1, sharex='all', sharey='none')
 	print("Plotting!")
 	while(True):
 		#start_new_thread(plotter, (f, ax1, ax2 ))
 		y = xdata.copy()
+		y2 = fdata.copy()
 		x = list(range(0,len(y)))
 		ax1.clear()
 		ax2.clear()
 		ax1.plot(x,y)  # 5 seconds rolling window
-		ax2.plot()
+		ax2.plot(x,y2)
 		ax2.set_xlabel('time [s]')
 		ax1.set_ylabel('Position [m]')
 		ax2.set_ylabel('Force [N]')
@@ -86,30 +89,28 @@ while(initMode):
 			start_new_thread(init_thread, (Conn, ))
 
 
-
-
 while(runMode):
 	readable, writable, errored = select.select(list(clients.values()), [], [])
 	for s in readable:
 		msg = s.recv(2048).decode('ascii')
 		data = msg.split("::")
+		print("tick")
 
-		try:
-			print(int(data[1]))
-			xdata.append(int(data[1]))
-			print(xdata)
-		except:
-			print("oops")
+		if(data[0] == "PLOT"):
+			xdata.append(float(data[1]))
+			fdata.append(float(data[2]))
+			if(len(xdata)==100):
+				del xdata[0]
+				del fdata[0]
+		else:
+			try:
+				clients[data[0]].sendall(str.encode(data[1]));
+			except:
+				print("Invalid route to " + data[0])
+			try:
+				if(data[1] == "SHUTDOWN"):
+					runMode = False
+			except:
+				print("...")
 
-		
-			
-
-		try:
-			clients[data[0]].sendall(str.encode(data[1]));
-		except:
-			print("Invalid route to " + data[0])
-		if(data[1] == "SHUTDOWN"):
-			runMode = False
-		
-	
 ServerSocket.close()
