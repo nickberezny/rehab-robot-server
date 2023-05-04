@@ -110,12 +110,23 @@ while(runMode):
 			try:
 				float(data[1])
 				float(data[2])
+				float(data[3])
+				float(data[4])
+				float(data[5])
+				float(data[6])
+				float(data[7])
+				float(data[8])
 				appendData = True
 			except: 
 				print("data bad:" + data[1] + " " + data[2])
+
 			if(appendData):
 				xdata.append(float(data[1]))
 				fdata.append(float(data[2]))
+				UImsg = str.encode(data[1]) + "," + str.encode(data[2])
+				clients["UI"].sendall(UImsg);
+
+
 		elif(data[0]=="UI" or data[0]=="ROBOT"):
 			try:
 				clients[data[0]].sendall(str.encode(data[1]));
