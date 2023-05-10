@@ -104,11 +104,12 @@ while(initMode):
 while(runMode):
 	readable, writable, errored = select.select(list(clients.values()), [], [])
 	for s in readable:
-		msg = s.recv(2048).decode('ascii')
+		msg = s.recv(27).decode('ascii')
 		data = msg.split("::")
 		#print("tick")
 		appendData = False
 		if(data[0] == "PLOT"):
+			print(msg)
 			try:
 				float(data[1])
 				float(data[2])
