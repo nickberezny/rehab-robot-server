@@ -104,12 +104,11 @@ while(initMode):
 while(runMode):
 	readable, writable, errored = select.select(list(clients.values()), [], [])
 	for s in readable:
-		msg = s.recv(27).decode('ascii')
+		msg = s.recv(2048).decode('ascii')
 		data = msg.split("::")
 		#print("tick")
 		appendData = False
 		if(data[0] == "PLOT"):
-			print(msg)
 			try:
 				float(data[1])
 				float(data[2])
@@ -131,6 +130,8 @@ while(runMode):
 
 
 		elif(data[0]=="UI" or data[0]=="ROBOT"):
+			if(data[0]=="ROBOT"):
+				data[1] = data[1] + "\0"
 			try:
 				clients[data[0]].sendall(str.encode(data[1]));
 			except:
