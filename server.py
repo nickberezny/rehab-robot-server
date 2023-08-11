@@ -3,6 +3,7 @@ import os
 import select
 from _thread import *
 from time import sleep
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
@@ -33,10 +34,21 @@ appendData = False
 
 colors = list(mcolors.TABLEAU_COLORS.values())
 
+# set up the figure
+f, (ax1, ax2) = plt.subplots(2, 1, sharex='all', sharey='none')
+ax2.set_xlabel('time [s]')
+ax1.set_ylabel('Position [m]')
+ax2.set_ylabel('Force [N]')
+ax1.plot(list(range(0,len(xdata))),xdata,colors[iteration]) 
+ax2.plot(list(range(0,len(fdata))),fdata,colors[iteration])
+plt.pause(1/plotRefereshRate)
+
 def plotter():
 	global xdata
 	global fdata
-	f, (ax1, ax2) = plt.subplots(2, 1, sharex='all', sharey='none')
+	global ax1
+	global ax2
+	
 	print("Plotting!")
 	while(True):
 		#start_new_thread(plotter, (f, ax1, ax2 ))
@@ -47,10 +59,8 @@ def plotter():
 		#ax2.clear()
 		ax1.plot(x,y,colors[iteration]) 
 		ax2.plot(x,y2,colors[iteration])
-		ax2.set_xlabel('time [s]')
-		ax1.set_ylabel('Position [m]')
-		ax2.set_ylabel('Force [N]')
 		plt.pause(1/plotRefereshRate)
+		#mypause(1/plotRefereshRate)
 
 def wait_for_selection_thread(connection):
 	global initMode, runMode
