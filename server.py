@@ -143,7 +143,7 @@ while(runMode):
 			if(data[0]=="ROBOT"):
 				data[1] = data[1] + "\0"
 			try:
-				clients[data[0]].sendall(str.encode(data[1]));
+				clients[data[0]].sendall((msg));
 			except:
 				print("Invalid route to " + data[0])
 			try:
