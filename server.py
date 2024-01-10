@@ -119,24 +119,7 @@ while(runMode):
 		print(data[1])
 		appendData = False
 		if(data[0] == "PLOT"):
-			try:
-				float(data[1])
-				float(data[2])
-				float(data[3])
-				float(data[4])
-				appendData = True
-			except: 
-				print("data bad:" + data[1] + " " + data[2] + " " + data[3] + " " + data[4])
-
-			if(appendData):
-				xdata.append(float(data[1]))
-				x0data.append(float(data[2]))
-				fdata.append(float(data[3]))
-				emgdata.append(float(data[4]))
-
-				msgString = data[1] + "," + data[2]
-				UImsg = str.encode(msgString) 
-				clients["UI"].sendall(UImsg);
+			clients[data[0]].sendall(str.encode(msg));
 
 
 		elif(data[0]=="UI" or data[0]=="ROBOT"):
