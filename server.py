@@ -122,7 +122,7 @@ while(runMode):
 			clients["UI"].sendall(str.encode(msg));
 
 
-		elif(data[0]=="UI" or data[0]=="ROBOT"):
+		elif(data[0]=="UI" or data[0]=="ROBOT" or data[0]=="GAME"):
 			if(data[0]=="ROBOT"):
 				data[1] = data[1] + "\0"
 			try:
