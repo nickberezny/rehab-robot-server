@@ -120,7 +120,7 @@ while(runMode):
 		appendData = False
 		if(data[0] == "PLOT"):
 			clients["UI"].sendall(str.encode(msg));
-
+			clients["GAME"].sendall(str.encode(msg));
 
 		elif(data[0]=="UI" or data[0]=="ROBOT" or data[0]=="GAME"):
 			if(data[0]=="ROBOT"):
