@@ -116,7 +116,7 @@ while(runMode):
 	for s in readable:
 		msg = s.recv(2048).decode('ascii')
 		data = msg.split("::")
-		print(msg)
+		print(data[1])
 		appendData = False
 		if(data[0] == "PLOT"):
 			try:
