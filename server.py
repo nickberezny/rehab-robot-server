@@ -119,14 +119,14 @@ while(runMode):
 		print(data[1])
 		appendData = False
 		if(data[0] == "PLOT"):
-			clients[data[0]].sendall(str.encode(msg));
+			clients["UI"].sendall(str.encode(msg));
 
 
 		elif(data[0]=="UI" or data[0]=="ROBOT"):
 			if(data[0]=="ROBOT"):
 				data[1] = data[1] + "\0"
 			try:
-				clients["UI"].sendall(str.encode(data[1]));
+				clients[data[0]].sendall(str.encode(data[1]));
 			except:
 				print("Invalid route to " + data[0])
 			try:
